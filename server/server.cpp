@@ -1,3 +1,5 @@
+#include "app/handle.h"
+#include "server/Server.h"
 #include <stdio.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
@@ -8,14 +10,21 @@
 #include <netinet/in.h>
 #include <sys/time.h>
 #include <sys/select.h>
-
+#include <iostream>
+using namespace std;
 
 #define ACCEPTED_ADDRESS INADDR_ANY
 #define PORT 1234
 #define BACKLOG 2
 #define BUFFER_SIZE 1024
 
-int main()
+
+Server::Server()
+{
+	cout << "start server.\n";
+}
+
+int Server::start()
 {
 	int ret;
 	int server_socket;
@@ -25,15 +34,13 @@ int main()
 	struct sockaddr_in ser_addr; /* server address */
 	struct sockaddr_in cli_addr; /* client address */
 
-//	struct fd_set fds;
-	fd_set* f;
+	//	struct fd_set fds;
+	fd_set *f;
 	FILE *fp;
-	int maxfdp;
-
 
 	//create socket
 	//协议族/域，协议类型，协议编号
-    //AF_INET :ipV4
+	//AF_INET :ipV4
 	//SOCK_STREAM: socket
 	//0:auto
 	server_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -48,7 +55,8 @@ int main()
 	ser_addr.sin_addr.s_addr = htonl(ACCEPTED_ADDRESS);
 	ser_addr.sin_port = htons(PORT);
 
-	ret = bind(server_socket, (struct sockaddr*) &ser_addr,sizeof(struct sockaddr_in));
+	ret = bind(server_socket, (struct sockaddr*) &ser_addr,
+			sizeof(struct sockaddr_in));
 	if (ret < 0)
 	{
 		printf("bind error\n");
@@ -68,35 +76,41 @@ int main()
 	socklen_t len = 0;
 	while (1)
 	{
-//		FD_ZERO(&fds);
-//		FD_SET(server_socket,&fds);
-//		 maxfdp=server_socket>fp?server_socket+1:fp+1; //描述符最大值加1
+		//		FD_ZERO(&fds);
+		//		FD_SET(server_socket,&fds);
+		//		 maxfdp=server_socket>fp?server_socket+1:fp+1; //描述符最大值加1
 
-
-		client_socket = accept(server_socket, (sockaddr*)&cli_addr, (socklen_t *)&len); //第二三个参数用记录连接的客户端状态
+		client_socket = accept(server_socket, (sockaddr*) &cli_addr,
+				(socklen_t*) &len); //第二三个参数用记录连接的客户端状态
 		if (client_socket < 0)
 		{
 			printf("handle error\n");
 			return 0;
 		}
-		printf("establish conection to %s..\n",inet_ntoa(cli_addr.sin_addr));
-		if (fork()==0)
+		printf("establish conection to %s..\n", inet_ntoa(cli_addr.sin_addr));
+		if (fork() == 0)
 		{
-			printf("my pid %d\n",getpid());
+			printf("my pid %d\n", getpid());
 			recv(client_socket, msg, (size_t) BUFFER_SIZE, 0);
-			printf("%d:%s\n", getpid(),msg);
+			printf("%d:%s\n", getpid(), msg);
 			strcpy(msg, "hello,client,this is server_s");
 			send(client_socket, msg, sizeof(msg), 0); //sent msg
-			status=0;
-			while(status==0)
+			handle(getpid());
+
+			status = 0;
+			while (status == 0)
 			{
 				//wait
 			}
 			close(client_socket);
-		}else{
+		}
+		else
+		{
 			close(client_socket);
 			printf("keep listening..\n ");
 		}
 	}
 	close(server_socket);
+	return 0;
 }
+
