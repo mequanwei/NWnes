@@ -41,9 +41,10 @@ int main()
 
 	strcpy(msg, "hello server,this is client");
 	send(client_socket, msg, strlen(msg), 0);
-	recv(client_socket, msg, (size_t) BUFFER_SIZE, 0);
-	printf("%s\n", msg);
+//	recv(client_socket, msg, (size_t) BUFFER_SIZE, 0);
+//	printf("%s\n", msg);
 	status=0;
+
 	while(status==0)
 	{
 

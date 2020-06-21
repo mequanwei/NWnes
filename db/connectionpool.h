@@ -1,5 +1,5 @@
-#ifndef DB_CONNECTION_H_
-#define DB_CONNECTION_H_
+#ifndef CONNECTIONPOOL_H_
+#define CONNECTIONPOOL_H_
 
 #include "sem/sem.h"
 #include "sem/mutex.h"

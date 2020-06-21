@@ -9,12 +9,13 @@ add_subdirectory(app)
 add_subdirectory(server)
 add_subdirectory(sem)
 add_subdirectory(db)
+add_subdirectory(pool)
 
 set(MODULE_LIST server)
-list(APPEND MODULE_LIST app)
 list(APPEND MODULE_LIST db)
 list(APPEND MODULE_LIST sem)
-
+list(APPEND MODULE_LIST pool)
+list(APPEND MODULE_LIST app)
 
 
 add_executable(client client/client.cpp)

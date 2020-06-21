@@ -8,5 +8,5 @@ cd build
 target=$1
 if [ $target==all ]; then
 	cmake ..
-	make VERBOSE=0
+	make VERBOSE=1
 fi
