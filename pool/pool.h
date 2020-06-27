@@ -17,7 +17,7 @@ public:
     /*thread_number是线程池中线程的数量，max_requests是请求队列中最多允许的、等待处理的请求的数量*/
     ThreadPool(ConnectionPool& pool_m, int thread_number = 8, int max_request = 10000);
     ~ThreadPool();
-    bool append(T *request);
+    bool append(T *request,int state);
 
 private:
     /*工作线程运行的函数，它不断从工作队列中取出任务并执行之*/
@@ -75,7 +75,7 @@ ThreadPool<T>::~ThreadPool()
 }
 
 template <typename T>
-bool ThreadPool<T>::append(T *request)
+bool ThreadPool<T>::append(T *request, int state)
 {
     m_queuelocker.Lock();
     if (m_workqueue.size() >= m_max_requests)
@@ -83,6 +83,7 @@ bool ThreadPool<T>::append(T *request)
         m_queuelocker.Unlock();
         return false;
     }
+    request->rw_state = state;
     m_workqueue.push_back(request);
     m_queuelocker.Unlock();
     m_queuestat.post();
@@ -117,7 +118,14 @@ void ThreadPool<T>::run()
         }
 
 //		m_connPool = &request->mysql;
-		request->process();
+        if (request->rw_state == 0)
+        {
+        	request->readHandle(); //read
+        }else
+        {
+
+        }
+
     }
 }
 

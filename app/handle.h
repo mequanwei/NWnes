@@ -3,9 +3,11 @@
 class Handle
 {
 public:
-	Handle();
-	~Handle();
-	int process();
+//	Handle();
+//	~Handle();
+	int readHandle();
+	int rw_state;
+
 };
 
 #endif

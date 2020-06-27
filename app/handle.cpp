@@ -6,7 +6,7 @@ using namespace std;
 
 
 
-int Handle::process()
+int Handle::readHandle()
 {
 
 	ConnectionPool &pool = ConnectionPool::GetInstance();
@@ -23,3 +23,4 @@ int Handle::process()
 
 	return 0;
 }
+

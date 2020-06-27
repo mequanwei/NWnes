@@ -33,6 +33,7 @@ Server::Server()
 	t_pool = new ThreadPool<Handle>(m_pool,3, 10);
 
 	epollfd = 0;
+	hs = new Handle[65536];
 	cout << "start server.\n";
 }
 
@@ -94,25 +95,24 @@ int Server::start()
 		printf("num: %d.\n",number);
 		for (int i = 0; i < number; i++)
 		{
-			if (events[i].data.fd == ret)
+			if (events[i].data.fd == server_socket)
 			{
 				cout << "new connetction."<<endl;
 				int client_socket = accept(server_socket, NULL, NULL);  //第二三个参数用记录连接的客户端状态
 				if (client_socket <0)
 				{
 					cout <<"error"<<endl;
+					continue;
 				}
 				addfd(epollfd, client_socket);
 			}
 			else if (events[i].events & EPOLLIN)
 			{
-				recv(events[i].data.fd , msg, (size_t) BUFFER_SIZE, 0);
-				cout << "recv msg " + string(msg) <<endl;
-//				printf("recv\n.");
+				handleRead(events[i].data.fd);
 			}
 			else if (events[i].events & EPOLLOUT)
 			{
-				cout << "witre\n";
+				handleWrite(events[i].data.fd);
 			}
 
 		}
@@ -120,6 +120,7 @@ int Server::start()
 
 	return 0;
 }
+
 
 void Server::addfd(int epollfd, int fd) {
     epoll_event event;
@@ -134,4 +135,18 @@ void Server::addfd(int epollfd, int fd) {
 
     fcntl(fd, F_SETFL, new_option);
     printf("add done\n");
+}
+
+int Server::handleRead(int fd)
+{
+		t_pool->append(&hs[fd],0);
+		return 0;
+
+}
+
+int Server::handleWrite(int fd)
+{
+//		recv((void *)fd , msg, (size_t) BUFFER_SIZE, 0);
+		return 0;
+
 }
