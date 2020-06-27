@@ -14,6 +14,7 @@ int Handle::readHandle()
 	string sql;
 
 	mysql = pool.GetConnection();
+
 	sql = "insert into test (message) values(" + to_string(getpid()) + ")";
 
 	if (mysql_query(mysql, sql.c_str()))
@@ -21,6 +22,7 @@ int Handle::readHandle()
 		//error
 	}
 
+	pool.ReleaseConnection(mysql);
 	return 0;
 }
 

@@ -38,7 +38,6 @@ int main()
 
 	//begin working
 	printf("success connect\n");
-
 	strcpy(msg, "hello server,this is client");
 	send(client_socket, msg, strlen(msg), 0);
 //	recv(client_socket, msg, (size_t) BUFFER_SIZE, 0);

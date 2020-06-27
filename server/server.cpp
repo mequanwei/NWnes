@@ -15,6 +15,7 @@
 #include <iostream>
 #include <sys/epoll.h>
 #include <fcntl.h>
+#include <event.h>
 using namespace std;
 
 #define ACCEPTED_ADDRESS INADDR_ANY
@@ -79,7 +80,6 @@ int Server::start()
 		return 0;
 	}
 	printf("begin listening\n");
-
 
 	//	struct fd_set fds;
 	cout <<"epoll begin";
